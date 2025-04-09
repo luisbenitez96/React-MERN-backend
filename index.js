@@ -1,3 +1,5 @@
+const path = require("path"); // se importa el modulo path que permite trabajar con rutas de archivos y directorios
+
 const express = require("express");
 require("dotenv").config();
 const { dbConnection } = require("./databases/config"); // se importa la funcion dbConnection del archivo config.js que se encuentra en la carpeta databases, la base de datos es mongodb
@@ -24,7 +26,7 @@ app.use(express.json()); // middleware que permite leer el body de la peticion y
 app.use("/api/auth", require("./routes/auth")); // esta ruta es para la autenticacion, app.use es para usar el middleware que es el encargado de hacer la peticion a la base de datos y devolver la respuesta al cliente
 app.use("/api/events", require("./routes/events"));
 
-// TODO : crud: eventos
+app.use(express.static(path.join(__dirname, "public"))); // res.sendFile es para enviar un archivo al cliente, en este caso el archivo index.html que se encuentra en la carpeta public, __dirname es una variable global que contiene la ruta del directorio actual, path.join es para unir las rutas de los archivos y directorios
 
 // escuchar peticiones
 app.listen(process.env.PORT, () => {
