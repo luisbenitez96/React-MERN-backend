@@ -17,6 +17,8 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
+      "http://localhost:3000",
+
       "https://react-mern-backend-production-644b.up.railway.app",
     ],
     credentials: true, // Si usas cookies o autenticación basada en sesión
