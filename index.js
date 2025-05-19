@@ -13,7 +13,15 @@ const app = express();
 dbConnection();
 
 // Cors
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://react-mern-backend-production-644b.up.railway.app",
+    ],
+    credentials: true, // Si usas cookies o autenticación basada en sesión
+  })
+);
 
 // Directorio publico
 
