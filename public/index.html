@@ -16,10 +16,16 @@
       integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
       crossorigin="anonymous"
       referrerpolicy="no-referrer" />
-    <script type="module" crossorigin src="/assets/index-D54he46C.js"></script>
+    <script type="module" crossorigin src="/assets/index-DteBn_nr.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-DUDXlw95.css">
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      const isProduction = "production" === "production";
+      if (isProduction && "serviceWorker" in navigator) {
+        navigator.serviceWorker.register("sw.js");
+      }
+    </script>
   </body>
 </html>
