@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test - CalendarApp</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        background-color: #f8f9fa;
+      }
+      .test-item {
+        margin: 10px 0;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: white;
+      }
+      .success {
+        border-color: #28a745;
+        background-color: #d4edda;
+      }
+      .error {
+        border-color: #dc3545;
+        background-color: #f8d7da;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Test de Assets - CalendarApp</h1>
+
+    <div class="test-item">
+      <h3>Archivos disponibles:</h3>
+      <ul>
+        <li>
+          <a href="./assets/index-DteBn_nr.js" target="_blank"
+            >JavaScript (relativo)</a
+          >
+        </li>
+        <li>
+          <a href="/React-MERN-backend/assets/index-DteBn_nr.js" target="_blank"
+            >JavaScript (absoluto)</a
+          >
+        </li>
+        <li>
+          <a href="./assets/index-DUDXlw95.css" target="_blank"
+            >CSS (relativo)</a
+          >
+        </li>
+        <li>
+          <a
+            href="/React-MERN-backend/assets/index-DUDXlw95.css"
+            target="_blank"
+            >CSS (absoluto)</a
+          >
+        </li>
+      </ul>
+    </div>
+
+    <div class="test-item">
+      <h3>Test de carga de JavaScript:</h3>
+      <div id="js-test">Probando...</div>
+    </div>
+
+    <div class="test-item">
+      <h3>Test de carga de CSS:</h3>
+      <div id="css-test">Probando...</div>
+    </div>
+
+    <script>
+      // Test de carga de JavaScript
+      const jsTest = document.getElementById("js-test");
+
+      // Intentar cargar el JavaScript
+      const script = document.createElement("script");
+      script.src = "./assets/index-DteBn_nr.js";
+      script.onload = function () {
+        jsTest.innerHTML =
+          "✅ JavaScript cargado correctamente (ruta relativa)";
+        jsTest.className = "test-item success";
+      };
+      script.onerror = function () {
+        jsTest.innerHTML = "❌ Error al cargar JavaScript (ruta relativa)";
+        jsTest.className = "test-item error";
+
+        // Intentar con ruta absoluta
+        const script2 = document.createElement("script");
+        script2.src = "/React-MERN-backend/assets/index-DteBn_nr.js";
+        script2.onload = function () {
+          jsTest.innerHTML =
+            "✅ JavaScript cargado correctamente (ruta absoluta)";
+          jsTest.className = "test-item success";
+        };
+        script2.onerror = function () {
+          jsTest.innerHTML =
+            "❌ Error al cargar JavaScript (ambas rutas fallaron)";
+          jsTest.className = "test-item error";
+        };
+        document.head.appendChild(script2);
+      };
+      document.head.appendChild(script);
+
+      // Test de carga de CSS
+      const cssTest = document.getElementById("css-test");
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = "./assets/index-DUDXlw95.css";
+      link.onload = function () {
+        cssTest.innerHTML = "✅ CSS cargado correctamente (ruta relativa)";
+        cssTest.className = "test-item success";
+      };
+      link.onerror = function () {
+        cssTest.innerHTML = "❌ Error al cargar CSS (ruta relativa)";
+        cssTest.className = "test-item error";
+
+        // Intentar con ruta absoluta
+        const link2 = document.createElement("link");
+        link2.rel = "stylesheet";
+        link2.href = "/React-MERN-backend/assets/index-DUDXlw95.css";
+        link2.onload = function () {
+          cssTest.innerHTML = "✅ CSS cargado correctamente (ruta absoluta)";
+          cssTest.className = "test-item success";
+        };
+        link2.onerror = function () {
+          cssTest.innerHTML = "❌ Error al cargar CSS (ambas rutas fallaron)";
+          cssTest.className = "test-item error";
+        };
+        document.head.appendChild(link2);
+      };
+      document.head.appendChild(link);
+    </script>
+  </body>
+</html>
