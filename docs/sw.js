@@ -4,7 +4,18 @@ importScripts(
 
 workbox.loadModule("workbox-background-sync");
 
-workbox.precaching.precacheAndRoute([{"revision":"da814f7e6900e51f8fc13906d77af481","url":"assets/index-DteBn_nr.js"},{"revision":"94ef5b21d6b3729df8a3bba50601ca44","url":"assets/index-DUDXlw95.css"},{"revision":"d4eee8737e5095ac49d12c0425cecd6e","url":"index.html"},{"revision":"8e3a10e157f75ada21ab742c022d5430","url":"vite.svg"}]);
+workbox.precaching.precacheAndRoute([
+  {
+    revision: "da814f7e6900e51f8fc13906d77af481",
+    url: "./assets/index-DteBn_nr.js",
+  },
+  {
+    revision: "94ef5b21d6b3729df8a3bba50601ca44",
+    url: "./assets/index-DUDXlw95.css",
+  },
+  { revision: "d4eee8737e5095ac49d12c0425cecd6e", url: "./index.html" },
+  { revision: "8e3a10e157f75ada21ab742c022d5430", url: "./vite.svg" },
+]);
 
 const { registerRoute } = workbox.routing;
 const { CacheFirst, NetworkFirst, NetworkOnly } = workbox.strategies;
