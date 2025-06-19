@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>React Test - CalendarApp</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        background-color: #f8f9fa;
+      }
+      .test-item {
+        margin: 10px 0;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: white;
+      }
+      .success {
+        border-color: #28a745;
+        background-color: #d4edda;
+      }
+      .error {
+        border-color: #dc3545;
+        background-color: #f8d7da;
+      }
+      .info {
+        border-color: #17a2b8;
+        background-color: #d1ecf1;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>React Test - CalendarApp</h1>
+
+    <div class="test-item info">
+      <h3>🔍 Información del sistema:</h3>
+      <p><strong>URL actual:</strong> <span id="current-url"></span></p>
+      <p><strong>Timestamp:</strong> <span id="timestamp"></span></p>
+    </div>
+
+    <div class="test-item">
+      <h3>📦 Carga del archivo JavaScript:</h3>
+      <div id="js-loading">Cargando...</div>
+    </div>
+
+    <div class="test-item">
+      <h3>⚛️ Variables globales:</h3>
+      <div id="globals">Verificando...</div>
+    </div>
+
+    <div class="test-item">
+      <h3>🔧 Elemento root:</h3>
+      <div id="root-container">
+        <div id="root">Este es el elemento root</div>
+      </div>
+    </div>
+
+    <div class="test-item">
+      <h3>📋 Errores capturados:</h3>
+      <div id="errors">Capturando errores...</div>
+    </div>
+
+    <script>
+      // Información básica
+      document.getElementById("current-url").textContent = window.location.href;
+      document.getElementById("timestamp").textContent =
+        new Date().toLocaleString();
+
+      // Capturar errores
+      const errors = [];
+      const originalError = console.error;
+      const originalLog = console.log;
+
+      console.error = function (...args) {
+        errors.push("ERROR: " + args.join(" "));
+        originalError.apply(console, args);
+        updateErrors();
+      };
+
+      console.log = function (...args) {
+        errors.push("LOG: " + args.join(" "));
+        originalLog.apply(console, args);
+        updateErrors();
+      };
+
+      function updateErrors() {
+        document.getElementById("errors").innerHTML = errors
+          .map(
+            (error) =>
+              `<div style="margin: 5px 0; padding: 5px; background: #f8d7da; border-left: 3px solid #dc3545;">${error}</div>`
+          )
+          .join("");
+      }
+
+      // Cargar el JavaScript
+      const jsLoading = document.getElementById("js-loading");
+      const script = document.createElement("script");
+      script.src = "./assets/index-DteBn_nr.js?v=react-test";
+
+      script.onload = function () {
+        jsLoading.innerHTML = "✅ JavaScript cargado correctamente";
+        jsLoading.className = "test-item success";
+
+        // Verificar variables globales después de 1 segundo
+        setTimeout(checkGlobals, 1000);
+      };
+
+      script.onerror = function () {
+        jsLoading.innerHTML = "❌ Error al cargar JavaScript";
+        jsLoading.className = "test-item error";
+      };
+
+      document.head.appendChild(script);
+
+      function checkGlobals() {
+        const globals = document.getElementById("globals");
+        const globalVars = [];
+
+        // Verificar React
+        if (typeof React !== "undefined") {
+          globalVars.push("✅ React: " + React.version);
+        } else {
+          globalVars.push("❌ React: No definido");
+        }
+
+        // Verificar ReactDOM
+        if (typeof ReactDOM !== "undefined") {
+          globalVars.push("✅ ReactDOM: " + ReactDOM.version);
+        } else {
+          globalVars.push("❌ ReactDOM: No definido");
+        }
+
+        // Verificar otras variables globales
+        const globalObjects = [
+          "window",
+          "document",
+          "navigator",
+          "localStorage",
+        ];
+        globalObjects.forEach((obj) => {
+          if (typeof window[obj] !== "undefined") {
+            globalVars.push(`✅ ${obj}: Definido`);
+          } else {
+            globalVars.push(`❌ ${obj}: No definido`);
+          }
+        });
+
+        globals.innerHTML = globalVars
+          .map((item) => `<div>${item}</div>`)
+          .join("");
+
+        // Intentar inicializar React manualmente
+        setTimeout(tryReactInit, 2000);
+      }
+
+      function tryReactInit() {
+        const rootElement = document.getElementById("root");
+
+        if (typeof React !== "undefined" && typeof ReactDOM !== "undefined") {
+          try {
+            // Intentar crear un elemento simple de React
+            const element = React.createElement(
+              "div",
+              null,
+              "¡React funciona!"
+            );
+
+            if (ReactDOM.createRoot) {
+              // React 18
+              const root = ReactDOM.createRoot(rootElement);
+              root.render(element);
+              console.log("✅ React 18 inicializado correctamente");
+            } else if (ReactDOM.render) {
+              // React 17 o anterior
+              ReactDOM.render(element, rootElement);
+              console.log("✅ React 17 inicializado correctamente");
+            }
+          } catch (error) {
+            console.error("❌ Error al inicializar React:", error);
+          }
+        } else {
+          console.error("❌ React o ReactDOM no están disponibles");
+        }
+      }
+
+      // Verificar después de 5 segundos
+      setTimeout(() => {
+        if (errors.length === 0) {
+          document.getElementById("errors").innerHTML =
+            "✅ No se detectaron errores";
+          document.getElementById("errors").className = "test-item success";
+        }
+      }, 5000);
+    </script>
+  </body>
+</html>

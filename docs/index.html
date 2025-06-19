@@ -21,19 +21,149 @@
       integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
       crossorigin="anonymous"
       referrerpolicy="no-referrer" />
+
+    <!-- Cargar React desde CDN para asegurar disponibilidad global -->
+    <script
+      crossorigin
+      src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
     <script
       type="module"
       crossorigin
-      src="./assets/index-DteBn_nr.js?v=2"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-DUDXlw95.css?v=2" />
+      src="./assets/index-DteBn_nr.js?v=5"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DUDXlw95.css?v=5" />
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div style="padding: 20px; text-align: center">
+        <h2>Cargando CalendarApp...</h2>
+        <p>
+          Si ves este mensaje por más de 5 segundos, hay un problema con la
+          inicialización.
+        </p>
+        <div
+          id="debug-info"
+          style="
+            margin-top: 20px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+          ">
+          <p><strong>Debug:</strong> Verificando carga de archivos...</p>
+        </div>
+      </div>
+    </div>
+
     <script>
-      const isProduction = "production" === "production";
-      if (isProduction && "serviceWorker" in navigator) {
-        navigator.serviceWorker.register("./sw.js");
+      // Debugging y verificación de React
+      console.log("🚀 Iniciando CalendarApp...");
+
+      // Verificar carga de archivos
+      const debugInfo = document.getElementById("debug-info");
+
+      // Verificar que React esté disponible
+      if (typeof React !== "undefined") {
+        console.log("✅ React disponible, versión:", React.version);
+        debugInfo.innerHTML += "<p>✅ React cargado correctamente</p>";
+      } else {
+        console.error("❌ React no disponible");
+        debugInfo.innerHTML += "<p>❌ React no disponible</p>";
       }
+
+      if (typeof ReactDOM !== "undefined") {
+        console.log("✅ ReactDOM disponible, versión:", ReactDOM.version);
+        debugInfo.innerHTML += "<p>✅ ReactDOM cargado correctamente</p>";
+      } else {
+        console.error("❌ ReactDOM no disponible");
+        debugInfo.innerHTML += "<p>❌ ReactDOM no disponible</p>";
+      }
+
+      // Verificar después de 3 segundos si la aplicación se inicializó
+      setTimeout(() => {
+        const rootElement = document.getElementById("root");
+        console.log("🔍 Estado del elemento root:", rootElement.innerHTML);
+
+        // Si el contenido no cambió, intentar inicializar manualmente
+        if (rootElement.innerHTML.includes("Cargando CalendarApp")) {
+          console.log(
+            "⚠️ La aplicación no se inicializó automáticamente, intentando manualmente..."
+          );
+          debugInfo.innerHTML +=
+            "<p>⚠️ Intentando inicialización manual...</p>";
+          tryManualInit();
+        } else {
+          debugInfo.innerHTML +=
+            "<p>✅ Aplicación inicializada automáticamente</p>";
+        }
+      }, 3000);
+
+      function tryManualInit() {
+        console.log("🔄 Intentando inicialización manual...");
+        try {
+          const rootElement = document.getElementById("root");
+          if (ReactDOM.createRoot) {
+            const root = ReactDOM.createRoot(rootElement);
+            const element = React.createElement(
+              "div",
+              {
+                style: {
+                  padding: "20px",
+                  textAlign: "center",
+                  backgroundColor: "#f8f9fa",
+                  borderRadius: "8px",
+                  margin: "20px",
+                },
+              },
+              [
+                React.createElement(
+                  "h2",
+                  { key: "title" },
+                  "¡CalendarApp Cargado!"
+                ),
+                React.createElement(
+                  "p",
+                  { key: "message" },
+                  "La aplicación se ha inicializado correctamente."
+                ),
+                React.createElement(
+                  "button",
+                  {
+                    key: "reload",
+                    onClick: () => window.location.reload(),
+                    style: {
+                      padding: "10px 20px",
+                      backgroundColor: "#007bff",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                    },
+                  },
+                  "Recargar Página"
+                ),
+              ]
+            );
+            root.render(element);
+            console.log("✅ React inicializado manualmente");
+            debugInfo.innerHTML += "<p>✅ React inicializado manualmente</p>";
+          }
+        } catch (error) {
+          console.error("❌ Error en inicialización manual:", error);
+          debugInfo.innerHTML +=
+            "<p>❌ Error en inicialización: " + error.message + "</p>";
+        }
+      }
+
+      // Deshabilitar service worker temporalmente para debugging
+      console.log("🔧 Service worker deshabilitado para debugging");
+
+      // const isProduction = "production" === "production";
+      // if (isProduction && "serviceWorker" in navigator) {
+      //   navigator.serviceWorker.register("./sw.js");
+      // }
     </script>
   </body>
 </html>

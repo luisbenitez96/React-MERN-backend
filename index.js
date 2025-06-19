@@ -18,8 +18,9 @@ app.use(
     origin: [
       "http://localhost:5173",
       "http://localhost:3000",
-
       "https://react-mern-backend-production-644b.up.railway.app",
+      "https://luisbenitez96.github.io", // Agregar dominio de GitHub Pages
+      "https://luisbenitez96.github.io/React-MERN-backend", // Agregar ruta específica
     ],
     credentials: true, // Si usas cookies o autenticación basada en sesión
   })

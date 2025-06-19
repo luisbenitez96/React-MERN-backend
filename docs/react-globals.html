@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>React Globals Test</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        background-color: #f8f9fa;
+      }
+      .test-item {
+        margin: 10px 0;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: white;
+      }
+      .success {
+        border-color: #28a745;
+        background-color: #d4edda;
+      }
+      .error {
+        border-color: #dc3545;
+        background-color: #f8d7da;
+      }
+      .info {
+        border-color: #17a2b8;
+        background-color: #d1ecf1;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>React Globals Test</h1>
+
+    <div class="test-item info">
+      <h3>🔍 Verificando variables globales:</h3>
+      <div id="globals-status">Cargando...</div>
+    </div>
+
+    <div class="test-item">
+      <h3>📦 Carga del archivo:</h3>
+      <div id="loading-status">Cargando...</div>
+    </div>
+
+    <div class="test-item">
+      <h3>🔧 Elemento root:</h3>
+      <div id="root">Elemento root para prueba</div>
+    </div>
+
+    <div class="test-item">
+      <h3>📋 Logs:</h3>
+      <div id="logs">Esperando logs...</div>
+    </div>
+
+    <script>
+      const logs = [];
+      const originalLog = console.log;
+      const originalError = console.error;
+
+      console.log = function (...args) {
+        logs.push("LOG: " + args.join(" "));
+        originalLog.apply(console, args);
+        updateLogs();
+      };
+
+      console.error = function (...args) {
+        logs.push("ERROR: " + args.join(" "));
+        originalError.apply(console, args);
+        updateLogs();
+      };
+
+      function updateLogs() {
+        document.getElementById("logs").innerHTML = logs
+          .map(
+            (log) =>
+              `<div style="margin: 5px 0; padding: 5px; background: #f8f9fa; border-left: 3px solid #007bff;">${log}</div>`
+          )
+          .join("");
+      }
+
+      // Cargar el archivo JavaScript
+      const loadingStatus = document.getElementById("loading-status");
+      const script = document.createElement("script");
+      script.src = "./assets/index-DteBn_nr.js?v=globals-test";
+
+      script.onload = function () {
+        loadingStatus.innerHTML = "✅ Archivo JavaScript cargado";
+        loadingStatus.className = "test-item success";
+
+        // Verificar variables globales después de 2 segundos
+        setTimeout(checkGlobals, 2000);
+      };
+
+      script.onerror = function () {
+        loadingStatus.innerHTML = "❌ Error al cargar archivo JavaScript";
+        loadingStatus.className = "test-item error";
+      };
+
+      document.head.appendChild(script);
+
+      function checkGlobals() {
+        const globalsStatus = document.getElementById("globals-status");
+        const results = [];
+
+        // Verificar React
+        if (typeof window.React !== "undefined") {
+          results.push("✅ React: " + window.React.version);
+          console.log("React detectado:", window.React.version);
+        } else {
+          results.push("❌ React: No disponible globalmente");
+          console.error("React no está disponible globalmente");
+        }
+
+        // Verificar ReactDOM
+        if (typeof window.ReactDOM !== "undefined") {
+          results.push("✅ ReactDOM: " + window.ReactDOM.version);
+          console.log("ReactDOM detectado:", window.ReactDOM.version);
+        } else {
+          results.push("❌ ReactDOM: No disponible globalmente");
+          console.error("ReactDOM no está disponible globalmente");
+        }
+
+        // Verificar otras variables globales
+        const globalVars = ["window", "document", "navigator"];
+        globalVars.forEach((varName) => {
+          if (typeof window[varName] !== "undefined") {
+            results.push(`✅ ${varName}: Disponible`);
+          } else {
+            results.push(`❌ ${varName}: No disponible`);
+          }
+        });
+
+        globalsStatus.innerHTML = results
+          .map((result) => `<div>${result}</div>`)
+          .join("");
+
+        // Intentar inicializar React manualmente si está disponible
+        if (
+          typeof window.React !== "undefined" &&
+          typeof window.ReactDOM !== "undefined"
+        ) {
+          setTimeout(tryManualInit, 1000);
+        }
+      }
+
+      function tryManualInit() {
+        console.log("Intentando inicialización manual de React...");
+
+        try {
+          const rootElement = document.getElementById("root");
+
+          if (window.ReactDOM.createRoot) {
+            // React 18
+            const root = window.ReactDOM.createRoot(rootElement);
+            const element = window.React.createElement(
+              "div",
+              null,
+              "¡React 18 funciona!"
+            );
+            root.render(element);
+            console.log("✅ React 18 inicializado manualmente");
+          } else if (window.ReactDOM.render) {
+            // React 17 o anterior
+            const element = window.React.createElement(
+              "div",
+              null,
+              "¡React 17 funciona!"
+            );
+            window.ReactDOM.render(element, rootElement);
+            console.log("✅ React 17 inicializado manualmente");
+          }
+        } catch (error) {
+          console.error("❌ Error en inicialización manual:", error);
+        }
+      }
+
+      // Verificar después de 5 segundos
+      setTimeout(() => {
+        if (logs.length === 0) {
+          document.getElementById("logs").innerHTML =
+            "✅ No se detectaron logs";
+        }
+      }, 5000);
+    </script>
+  </body>
+</html>

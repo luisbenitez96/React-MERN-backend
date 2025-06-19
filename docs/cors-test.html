@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CORS Test - CalendarApp</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        background-color: #f8f9fa;
+      }
+      .test-item {
+        margin: 10px 0;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: white;
+      }
+      .success {
+        border-color: #28a745;
+        background-color: #d4edda;
+      }
+      .error {
+        border-color: #dc3545;
+        background-color: #f8d7da;
+      }
+      .info {
+        border-color: #17a2b8;
+        background-color: #d1ecf1;
+      }
+      .warning {
+        border-color: #ffc107;
+        background-color: #fff3cd;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>CORS Test - CalendarApp</h1>
+
+    <div class="test-item info">
+      <h3>🔍 Información del sistema:</h3>
+      <p><strong>URL actual:</strong> <span id="current-url"></span></p>
+      <p><strong>Origen:</strong> <span id="origin"></span></p>
+      <p><strong>Timestamp:</strong> <span id="timestamp"></span></p>
+    </div>
+
+    <div class="test-item">
+      <h3>🌐 Test de conexión con backend:</h3>
+      <div id="backend-test">Probando...</div>
+    </div>
+
+    <div class="test-item">
+      <h3>📦 Test de carga de archivos:</h3>
+      <div id="files-test">Probando...</div>
+    </div>
+
+    <div class="test-item">
+      <h3>📋 Logs detallados:</h3>
+      <div id="logs">Esperando logs...</div>
+    </div>
+
+    <script>
+      // Información básica
+      document.getElementById("current-url").textContent = window.location.href;
+      document.getElementById("origin").textContent = window.location.origin;
+      document.getElementById("timestamp").textContent =
+        new Date().toLocaleString();
+
+      // Capturar logs
+      const logs = [];
+      const originalLog = console.log;
+      const originalError = console.error;
+
+      console.log = function (...args) {
+        logs.push("LOG: " + args.join(" "));
+        originalLog.apply(console, args);
+        updateLogs();
+      };
+
+      console.error = function (...args) {
+        logs.push("ERROR: " + args.join(" "));
+        originalError.apply(console, args);
+        updateLogs();
+      };
+
+      function updateLogs() {
+        document.getElementById("logs").innerHTML = logs
+          .map(
+            (log) =>
+              `<div style="margin: 5px 0; padding: 5px; background: #f8f9fa; border-left: 3px solid #007bff;">${log}</div>`
+          )
+          .join("");
+      }
+
+      // Test de backend
+      const backendTest = document.getElementById("backend-test");
+      console.log("🔍 Iniciando test de backend...");
+
+      fetch(
+        "https://react-mern-backend-production-644b.up.railway.app/api/auth/renew",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          mode: "cors",
+        }
+      )
+        .then((response) => {
+          console.log(
+            "📡 Respuesta del servidor:",
+            response.status,
+            response.statusText
+          );
+          return response.json();
+        })
+        .then((data) => {
+          console.log("✅ Datos recibidos:", data);
+          backendTest.innerHTML = `✅ Conexión exitosa: ${data.msg || "OK"}`;
+          backendTest.className = "test-item success";
+        })
+        .catch((error) => {
+          console.error("❌ Error de conexión:", error);
+          backendTest.innerHTML = `❌ Error de conexión: ${error.message}`;
+          backendTest.className = "test-item error";
+        });
+
+      // Test de archivos
+      const filesTest = document.getElementById("files-test");
+      console.log("🔍 Iniciando test de archivos...");
+
+      // Test CSS
+      const cssLink = document.createElement("link");
+      cssLink.rel = "stylesheet";
+      cssLink.href = "./assets/index-DUDXlw95.css?v=cors-test";
+
+      cssLink.onload = function () {
+        console.log("✅ CSS cargado correctamente");
+        filesTest.innerHTML = "✅ CSS cargado correctamente<br>";
+      };
+
+      cssLink.onerror = function () {
+        console.error("❌ Error al cargar CSS");
+        filesTest.innerHTML = "❌ Error al cargar CSS<br>";
+      };
+
+      document.head.appendChild(cssLink);
+
+      // Test JS
+      const jsScript = document.createElement("script");
+      jsScript.src = "./assets/index-DteBn_nr.js?v=cors-test";
+
+      jsScript.onload = function () {
+        console.log("✅ JavaScript cargado correctamente");
+        filesTest.innerHTML += "✅ JavaScript cargado correctamente";
+        filesTest.className = "test-item success";
+      };
+
+      jsScript.onerror = function () {
+        console.error("❌ Error al cargar JavaScript");
+        filesTest.innerHTML += "❌ Error al cargar JavaScript";
+        filesTest.className = "test-item error";
+      };
+
+      document.head.appendChild(jsScript);
+
+      // Verificar después de 5 segundos
+      setTimeout(() => {
+        if (logs.length === 0) {
+          document.getElementById("logs").innerHTML =
+            "✅ No se detectaron logs";
+        }
+      }, 5000);
+    </script>
+  </body>
+</html>
