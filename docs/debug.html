@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Debug - CalendarApp</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        background-color: #f8f9fa;
+      }
+      .debug-item {
+        margin: 10px 0;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: white;
+      }
+      .success {
+        border-color: #28a745;
+        background-color: #d4edda;
+      }
+      .error {
+        border-color: #dc3545;
+        background-color: #f8d7da;
+      }
+      .info {
+        border-color: #17a2b8;
+        background-color: #d1ecf1;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Debug - CalendarApp</h1>
+
+    <div class="debug-item info">
+      <h3>🔍 Información del sistema:</h3>
+      <p><strong>User Agent:</strong> <span id="user-agent"></span></p>
+      <p><strong>URL actual:</strong> <span id="current-url"></span></p>
+      <p><strong>Timestamp:</strong> <span id="timestamp"></span></p>
+    </div>
+
+    <div class="debug-item">
+      <h3>📦 Carga de archivos:</h3>
+      <div id="file-loading">Verificando...</div>
+    </div>
+
+    <div class="debug-item">
+      <h3>⚛️ React y DOM:</h3>
+      <div id="react-status">Verificando...</div>
+    </div>
+
+    <div class="debug-item">
+      <h3>🌐 Conexión con backend:</h3>
+      <div id="backend-status">Verificando...</div>
+    </div>
+
+    <div class="debug-item">
+      <h3>🔧 Elemento root:</h3>
+      <div id="root-status">Verificando...</div>
+    </div>
+
+    <div class="debug-item">
+      <h3>📋 Errores de consola:</h3>
+      <div id="console-errors">Capturando errores...</div>
+    </div>
+
+    <script>
+      // Información del sistema
+      document.getElementById("user-agent").textContent = navigator.userAgent;
+      document.getElementById("current-url").textContent = window.location.href;
+      document.getElementById("timestamp").textContent =
+        new Date().toLocaleString();
+
+      // Verificar carga de archivos
+      const fileLoading = document.getElementById("file-loading");
+      const script = document.createElement("script");
+      script.src = "./assets/index-DteBn_nr.js?v=debug";
+      script.onload = function () {
+        fileLoading.innerHTML = "✅ JavaScript cargado correctamente";
+        fileLoading.className = "debug-item success";
+      };
+      script.onerror = function () {
+        fileLoading.innerHTML = "❌ Error al cargar JavaScript";
+        fileLoading.className = "debug-item error";
+      };
+      document.head.appendChild(script);
+
+      // Verificar React
+      const reactStatus = document.getElementById("react-status");
+      setTimeout(() => {
+        if (typeof React !== "undefined") {
+          reactStatus.innerHTML = "✅ React detectado";
+          reactStatus.className = "debug-item success";
+        } else {
+          reactStatus.innerHTML = "❌ React no detectado";
+          reactStatus.className = "debug-item error";
+        }
+      }, 2000);
+
+      // Verificar backend
+      const backendStatus = document.getElementById("backend-status");
+      fetch(
+        "https://react-mern-backend-production-644b.up.railway.app/api/auth/renew"
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          backendStatus.innerHTML = `✅ Backend conectado: ${data.msg}`;
+          backendStatus.className = "debug-item success";
+        })
+        .catch((error) => {
+          backendStatus.innerHTML = `❌ Error de conexión: ${error.message}`;
+          backendStatus.className = "debug-item error";
+        });
+
+      // Verificar elemento root
+      const rootStatus = document.getElementById("root-status");
+      const rootElement = document.getElementById("root");
+      if (rootElement) {
+        rootStatus.innerHTML = `✅ Elemento root encontrado. Contenido: "${rootElement.innerHTML}"`;
+        rootStatus.className = "debug-item success";
+      } else {
+        rootStatus.innerHTML = "❌ Elemento root no encontrado";
+        rootStatus.className = "debug-item error";
+      }
+
+      // Capturar errores de consola
+      const consoleErrors = document.getElementById("console-errors");
+      const originalError = console.error;
+      const errors = [];
+
+      console.error = function (...args) {
+        errors.push(args.join(" "));
+        originalError.apply(console, args);
+        consoleErrors.innerHTML = errors
+          .map((error) => `<div>❌ ${error}</div>`)
+          .join("");
+        consoleErrors.className = "debug-item error";
+      };
+
+      // Verificar después de 3 segundos
+      setTimeout(() => {
+        if (errors.length === 0) {
+          consoleErrors.innerHTML = "✅ No se detectaron errores en la consola";
+          consoleErrors.className = "debug-item success";
+        }
+      }, 3000);
+    </script>
+  </body>
+</html>
